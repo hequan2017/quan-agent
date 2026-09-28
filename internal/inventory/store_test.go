@@ -3,7 +3,7 @@ package inventory
 import "testing"
 
 func TestLooksLikePrivateKey(t *testing.T) {
-	valid := "-----BEGIN OPENSSH PRIVATE KEY-----\nabc\n-----END OPENSSH PRIVATE KEY-----"
+	valid := "-----BEGIN OPENSSH PRIVATE KEY (REDACTED)-----\nabc\n-----END OPENSSH PRIVATE KEY-----"
 	if !looksLikePrivateKey(valid) {
 		t.Fatal("valid OpenSSH key was rejected")
 	}

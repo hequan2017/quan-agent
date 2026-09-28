@@ -95,16 +95,16 @@ func (s *Store) AddKey(name, privateKey string) (Key, error) {
 	name = strings.TrimSpace(name)
 	privateKey = strings.TrimSpace(privateKey)
 	if name == "" || len(name) > 100 {
-		return Key{}, errors.New("密钥名称不能为空且不能超过 100 个字符")
+		return Key{}, errors.New("密钥名称不能为空且不能超�?100 个字�?)
 	}
 	if !looksLikePrivateKey(privateKey) {
-		return Key{}, errors.New("仅支持 OpenSSH、RSA、EC 或 PKCS#8 PEM 私钥")
+		return Key{}, errors.New("仅支�?OpenSSH、RSA、EC �?PKCS#8 PEM 私钥")
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for _, key := range s.keys {
 		if strings.EqualFold(key.Name, name) {
-			return Key{}, errors.New("密钥名称已存在")
+			return Key{}, errors.New("密钥名称已存�?)
 		}
 	}
 	key := Key{ID: newID(), Name: name, PrivateKey: privateKey + "\n", CreatedAt: time.Now().Format(time.RFC3339)}
@@ -125,7 +125,7 @@ func (s *Store) DeleteKey(id string) error {
 	}
 	for _, machine := range s.machines {
 		if machine.KeyID == id {
-			return errors.New("该密钥仍被机器使用，请先修改或删除关联机器")
+			return errors.New("该密钥仍被机器使用，请先修改或删除关联机�?)
 		}
 	}
 	key := s.keys[id]
@@ -170,27 +170,27 @@ func (s *Store) AddMachine(machine Machine) (Machine, error) {
 		machine.Port = 22
 	}
 	if machine.Name == "" || len(machine.Name) > 100 {
-		return Machine{}, errors.New("机器名称不能为空且不能超过 100 个字符")
+		return Machine{}, errors.New("机器名称不能为空且不能超�?100 个字�?)
 	}
 	if !validHost(machine.Host) {
 		return Machine{}, errors.New("主机地址格式无效")
 	}
 	if machine.Port < 1 || machine.Port > 65535 {
-		return Machine{}, errors.New("SSH 端口必须在 1-65535 之间")
+		return Machine{}, errors.New("SSH 端口必须�?1-65535 之间")
 	}
 	if !safeName.MatchString(machine.User) || len(machine.User) > 64 {
-		return Machine{}, errors.New("SSH 用户名格式无效")
+		return Machine{}, errors.New("SSH 用户名格式无�?)
 	}
 	machine.Tags = normalizeTags(machine.Tags)
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.keys[machine.KeyID]; !ok {
-		return Machine{}, errors.New("关联密钥不存在")
+		return Machine{}, errors.New("关联密钥不存�?)
 	}
 	for _, current := range s.machines {
 		if strings.EqualFold(current.Name, machine.Name) {
-			return Machine{}, errors.New("机器名称已存在")
+			return Machine{}, errors.New("机器名称已存�?)
 		}
 	}
 	machine.ID = newID()
@@ -271,10 +271,10 @@ func (s *Store) saveLocked() error {
 
 func looksLikePrivateKey(value string) bool {
 	headers := []string{
-		"-----BEGIN OPENSSH PRIVATE KEY-----",
-		"-----BEGIN RSA PRIVATE KEY-----",
-		"-----BEGIN EC PRIVATE KEY-----",
-		"-----BEGIN PRIVATE KEY-----",
+		"-----BEGIN OPENSSH PRIVATE KEY (REDACTED)-----",
+		"-----BEGIN RSA PRIVATE KEY (REDACTED)-----",
+		"-----BEGIN EC PRIVATE KEY (REDACTED)-----",
+		"-----BEGIN PRIVATE KEY (REDACTED)-----",
 	}
 	for _, header := range headers {
 		if strings.HasPrefix(value, header) && strings.Contains(value, strings.Replace(header, "BEGIN", "END", 1)) {
